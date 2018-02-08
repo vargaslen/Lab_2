@@ -31,14 +31,12 @@ Implementarás tu juego en la nube con Heroku, lo que te brindará experiencia en 
 
 Esta asignación utiliza el marco simple de Sinatra en lugar de Rails, para que puedas centrarte en las herramientas, la mecánica y los conceptos de SaaS, que se correlacionarán fácilmente con Rails más adelante. Como nuestra aplicación no tiene una base de datos y tiene muy pocas funciones, Sinatra es una manera fácil de comenzar.
 
-Contents
----------
+Contenido
+Parte 0: Desmitificar la creación de aplicaciones SaaS
+Parte 1: Hangperson
+Parte 2: Pensamiento RESTful para HangPerson
+Parte 3: Conexión de Hangperson Game a Sinatra
+Parte 4: Introducción al cucumber
+Parte 5: casos de esquina
+Parte 6: Conclusión
 
-* Part 0: [Demystifying SaaS app creation](docs/part_0_create_saas_app.md)
-* Part 1: [Hangperson](docs/part_1_hangperson.md)
-* Part 2: [RESTful thinking for HangPerson](docs/part_2_restful_thinking.md)
-* Part 3: [Connecting HangpersonGame to Sinatra](docs/part_3_connecting_hangperson_to_sinatra.md)
-* Part 4: [Introducing Cucumber](docs/part_4_cucumber.md)
-* Part 5: [Corner Cases](docs/part_5_corner_cases.md)
-* Part 6: [Conclusion](docs/part_6_conclusion.md)
-* Part 7: [Optional Challenge Assignment](docs/part_7_optional_challenge.md)
