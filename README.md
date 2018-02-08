@@ -32,6 +32,7 @@ Implementarás tu juego en la nube con Heroku, lo que te brindará experiencia en 
 Esta asignación utiliza el marco simple de Sinatra en lugar de Rails, para que puedas centrarte en las herramientas, la mecánica y los conceptos de SaaS, que se correlacionarán fácilmente con Rails más adelante. Como nuestra aplicación no tiene una base de datos y tiene muy pocas funciones, Sinatra es una manera fácil de comenzar.
 
 Contenido
+
 Parte 0: Desmitificar la creación de aplicaciones SaaS
 
 Parte 1: Hangperson
