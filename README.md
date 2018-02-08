@@ -33,10 +33,16 @@ Esta asignación utiliza el marco simple de Sinatra en lugar de Rails, para que p
 
 Contenido
 Parte 0: Desmitificar la creación de aplicaciones SaaS
+
 Parte 1: Hangperson
+
 Parte 2: Pensamiento RESTful para HangPerson
+
 Parte 3: Conexión de Hangperson Game a Sinatra
+
 Parte 4: Introducción al cucumber
+
 Parte 5: casos de esquina
+
 Parte 6: Conclusión
 
