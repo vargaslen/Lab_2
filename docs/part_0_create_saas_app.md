@@ -1,201 +1,144 @@
-Part 0: Demystifying SaaS app creation
-==============================
+Parte 0: Desmitificar la creación de aplicaciones SaaS
 
-**Goal:** Understand the steps needed to create, version, and deploy a SaaS app, including tracking the libraries it depends on so that your production and development environments are as similar as possible.
+Objetivo: comprender los pasos necesarios para crear, versionar e implementar una aplicación SaaS, incluido el seguimiento de las bibliotecas de las que depende para que sus entornos de producción y desarrollo sean lo más similares posible.
 
-**What you will do:** Create a simple "hello world" app using the Sinatra framework, version it properly, and deploy it to Heroku.
+Lo que harás: crea una aplicación sencilla de "hello world" utilizando el framework Sinatra, vuélvela a la versión adecuada y despliégala en Heroku.
 
-Creating and versioning a simple SaaS app
------------------------------------------
+Crear y versionar una aplicación SaaS simple
 
-SaaS apps are developed on your computer (or cloud-based IDE) but *deployed to production* on a server that others can access.  We try to minimize the differences between the development and production *environments*, to avoid difficult-to-diagnose problems in which something works one way on your development computer but a different way (or not at all) when that code is deployed to production.
+Las aplicaciones SaaS se desarrollan en tu computadora (o IDE basado en la nube) pero se implementan en un servidor al que otros pueden acceder. Intentamos minimizar las diferencias entre los entornos de desarrollo y producción , para evitar problemas difíciles de diagnosticar en los que algo funciona de una manera en tu computadora de desarrollo pero de una manera diferente (o nada) cuando ese código se implementa en producción.
 
-We have two mechanisms for keeping the development and production environments consistent.  The first is *version control*, such as Git, for the app's code.  But since almost all apps also rely on *libraries* written by others, such as *gems* in the case of Ruby, we need a way to keep track of which versions of which libraries our app has been tested with, so that the same ones are used in development and production.
+Tenemos dos mecanismos para mantener los entornos de desarrollo y producción consistentes. El primero es el control de versiones , como Git, para el código de la aplicación. Pero dado que casi todas las aplicaciones también se basan en bibliotecas escritas por otros, como gemas en el caso de Ruby, necesitamos una forma de realizar un seguimiento de las versiones de las bibliotecas con las que se ha probado nuestra aplicación, para que las mismas se utilicen en desarrollo y producción.
 
-Happily, Ruby has a wonderful system for managing gem dependencies: a gem called **Bundler** looks for a file called `Gemfile` in the *app root directory* of each project.  The `Gemfile` contains a list of gems and versions your app depends on. Bundler verifies that those gems, and any others that they in turn depend on, are properly installed on your system and accessible to the app.
+Afortunadamente, Ruby tiene un maravilloso sistema para administrar dependencias de gemas: una gema llamada Bundler busca un archivo llamado Gemfile en el directorio raíz de la aplicación de cada proyecto. El Gemfile contiene una lista de gemas y versiones de las que depende tu aplicación. Bundler verifica que esas gemas, y cualquier otra a la que dependan, están instaladas correctamente en tu sistema y accesibles para la aplicación.
 
-Let's start with the following steps:
+Comencemos con los siguientes pasos:
 
-* Create a new empty directory to hold your new app, and use `git init` in that directory to start versioning it with Git.
+Crea un nuevo directorio vacío para guardar tu nueva aplicación y utilíza  "git init" en ese directorio para comenzar a crear versiones con Git.
 
-* In that directory, create a new file called `Gemfile` (the capitalization is important) with the following contents.  This file will be a permanent part of your app and will travel with your app anywhere it goes:
+En ese directorio, crea un nuevo archivo llamado Gemfile (la capitalización es importante) con los siguientes contenidos. Este archivo será una parte permanente de tu aplicación y se desplazará con tu aplicación a donde quiera que vaya:
 
-```rb
-source 'https://rubygems.org'
-ruby '2.3.0'
+fuente ' https://rubygems.org ' 
+ruby ' 2.3.0 '
+ 
+gem ' sinatra ' , ' > = 1.4 '
 
-gem 'sinatra', '>= 1.4'
-```
+La primera línea dice que el lugar preferido para descargar las gemas necesarias es https://rubygems.org , que es donde la comunidad de Ruby registra las gemas de "producción lista".
 
-The first line says that the preferred place to download any necessary gems is https://rubygems.org, which is where the Ruby community registers "production ready" gems.
+La segunda línea especifica qué versión del intérprete de lenguaje Ruby se requiere. Si omitimos esta línea, Bundler no intentará verificar qué versión de Ruby está disponible; hay diferencias sutiles entre las versiones, y no todas las gemas funcionan con todas las versiones, por lo que es mejor especificar esto.
 
-The second line specifies which version of the Ruby language interpreter is required.  If we omitted this line, Bundler wouldn't try to verify which version of Ruby is available; there are subtle differences between the versions, and not all gems work with all versions, so it's best to specify this.
+La última línea dice que necesitamos la versión 1.4 o posterior de la gema sinatra. En algunos casos, no necesitamos especificar qué versión de una joya queremos; en este caso, lo especificamos porque dependemos de algunas características que están ausentes de las versiones anteriores de Sinatra.
 
-The last line says we need version 1.4 or later of the `sinatra` gem. In some cases we don't need to specify which version of a gem we want; in this case we do specify it because we rely on some features that are absent from earlier versions of Sinatra.
+Ejecutar Bundler
 
-Run Bundler
------------
+Ejecute el comando bundle, lo que examina Gemfile para asegurarse de que las gemas correctas (y, donde se especifique, las versiones correctas) estén disponibles, e intenta instalarlas de otro modo. Esto creará un nuevo archivo Gemfile.lock, que debes colocar bajo control de versión.
 
-Run the command `bundle`, which examines your `Gemfile` to make sure the correct gems (and, where specified, the correct versions) are available, and tries to install them otherwise.  This will create a new file `Gemfile.lock`, *which you should place under version control.*
+Para colocar bajo control de versión, usa estos comandos:
 
-To place under version control, use these commands:
+$ git add . 
+$ git commit -m " Configurar el Gemfile "
 
-```sh
-$ git add .
-$ git commit -m "Set up the Gemfile"
-```
+El primer comando prepara todos los archivos modificados para la confirmación (commit). El segundo comando confirma los archivos preparados con el comentario entre comillas. Puedes repetir estos comandos para confirmar cambios futuros. Recuerda que estos son commits LOCALES - si quieres estos cambios en GitHub, deberás ejecutar un comando "git push", que mostraremos más adelante.
 
-The first command stages all changed files for committing. The second command commits the staged files with the comment in the quotes. You can repeat these commands to commit future changes. Remember that these are LOCAL commits -- if you want these changes on GitHub, you'll need to do a git push command, which we will show later.
+Preguntas de autoverificación (haga clic en triángulo para verificar su respuesta)
 
-#### Self Check Questions (click triangle to check your answer)
+¿Cuál es la diferencia entre el propósito y el contenido de Gemfiley Gemfile.lock? ¿Qué archivo se necesita para reproducir completamente las gemas del entorno de desarrollo en el entorno de producción?
 
-<details>
-  <summary>What's the difference between the purpose and contents of <code>Gemfile</code> and <code>Gemfile.lock</code>?  Which file is needed to completely reproduce the development environment's gems in the production environment?</summary>
-  <p><blockquote><code>Gemfile</code> specifies the gems you need and in some cases the constraints on which version(s) are acceptable. <code>Gemfile.lock</code> records the *actual* versions found, not only of the gems you specified explicitly but also any other gems on which they depend, so it is the file used by the production environment to reproduce the gems available in the development environment.</blockquote></p>
-</details>
-<br />
-<details>
-  <summary>After running <code>bundle</code>, why are there gems listed in <code>Gemfile.lock</code>
-that were not listed in <code>Gemfile</code>?</summary>
-  <p><blockquote>Bundler looked up the information for each Gem you requested (in this case, only <code>sinatra</code>) and realized that it depends on other gems, which in turn depend on still others, so it recursively installed all those dependencies.  For example, the <code>rack</code> appserver is a gem, and while you didn't explicitly request it, <code>sinatra</code> depends on it.  This is an example of the power of automation: rather than requiring you (the app developer) to understand every Gem dependency, Bundler automates that process and lets you focus only on your app's top-level dependencies.</blockquote></p>
-</details>
+Después de ejecutar bundle, ¿por qué hay gemas enumeradas en las Gemfile.lock que no figuraban Gemfile?
+Crea una aplicación SaaS simple con Sinatra
+Como explica el Capítulo 2 de ESaaS, las aplicaciones SaaS requieren un servidor web para recibir solicitudes HTTP del mundo exterior y un servidor de aplicaciones que "conecta" la lógica de su aplicación con el servidor web. Para el desarrollo, utilizaremos webrickun servidor web basado en Ruby muy simple que sería inapropiado para la producción pero que está bien para el desarrollo. Tanto en desarrollo como en producción, utilizaremos el rackservidor de aplicaciones basado en Ruby, que es compatible con las aplicaciones de Ruby escritas en varios frameworks, incluidos Sinatra y Rails.
 
+Como explica el Capítulo 2 de ESaaS , una aplicación SaaS esencialmente reconoce y responde a las solicitudes HTTP correspondientes a las rutas de la aplicación (recuerde que una ruta consiste en un método HTTP como GETo POSTmás un URI). Sinatra proporciona una abreviatura extremadamente ligera para hacer coincidir una ruta con el código de la aplicación que se ejecutará cuando llegue una solicitud que utiliza esa ruta desde el servidor web.
 
-Create a simple SaaS app with Sinatra
--------------------------------------
+Cree un archivo en su proyecto llamado que app.rbcontenga lo siguiente:
 
-As Chapter 2 of ESaaS explains, SaaS apps require a web server to receive HTTP requests from the outside world, and an application server that "connects" your app's logic to the web server.  For development, we will use `webrick`, a very simple Ruby-based web server that would be inappropriate for production but is fine for development.  In both development and production, we will use the `rack` Ruby-based application server, which supports Ruby apps written in various frameworks including Sinatra and Rails.
+requiere  ' sinatra '
 
-As Chapter 2 of *ESaaS* explains, a SaaS app essentially recognizes and responds to HTTP requests corresponding to the application's *routes* (recall that a route consists of an HTTP method such as `GET` or `POST` plus a URI).  Sinatra provides an extremely lightweight shorthand for matching a route with the app code to be executed when a request using that route arrives from the Web server.
-
-Create a file in your project called `app.rb` containing the following:
-
-```rb
-require 'sinatra'
-
-class MyApp < Sinatra::Base
-  get '/' do
-    "<!DOCTYPE html><html><head></head><body><h1>Hello World</h1></body></html>"
-  end
+ clase  MyApp <Sinatra :: Base 
+  get ' / '  do 
+    " <! DOCTYPE html> <html> <head> </ head> <body> <h1> Hello World </ h1> </ body> </ html> "
+   end 
 end
-```
+El getmétodo es proporcionado por la Sinatra::Baseclase, de la cual nuestra MyAppclase hereda; Sinatra::Baseestá disponible porque cargamos la biblioteca de Sinatra en la línea 1.
 
-The `get` method is provided by the `Sinatra::Base` class, from which our `MyApp` class inherits; `Sinatra::Base` is available because we load the Sinatra library on line 1.
+Pregunta de autoverificación
+¿Qué * dos * pasos tomamos antes para garantizar que la biblioteca de Sinatra esté disponible para cargar en la línea 1?
 
-#### Self Check Question
+Como puede ver en el ejemplo simple anterior, Sinatra le permite escribir funciones que coinciden con una ruta HTTP entrante, en este caso GET '/'(la URL raíz), un documento HTML muy simple que contiene la cadena Hello Worldse devolverá al nivel de presentación como resultado de la solicitud.
 
-<details>
-  <summary>What *two* steps did we take earlier to guarantee that the Sinatra library is available to load in line 1?</summary>
-  <p><blockquote> We specified <code>gem 'sinatra'</code> in the <code>Gemfile</code> *and* successfully ran <code>bundle</code> to confirm that the gem is installed and "lock" the correct version of it in <code>Gemfile.lock</code>.</blockquote></p>
-</details>
+Para ejecutar nuestra aplicación, debemos iniciar el servidor de aplicaciones y el servidor de nivel de presentación (web). El rackservidor de aplicaciones está controlado por un archivo config.ru, que ahora debe crear y agregar al control de versiones, que contiene lo siguiente:
 
-<br />
+requiere  ' ./app ' 
+ejecutar MyApp
+La primera línea le dice a Rack que nuestra aplicación vive en el archivo app.rb, que usted creó anteriormente para guardar el código de su aplicación. Tenemos que declarar explícitamente que nuestro apparchivo se encuentra en el directorio actual (.) Porque requirenormalmente solo busca en los directorios del sistema estándar para encontrar gemas.
 
-As you see from the above simple example, Sinatra lets you write functions that match an incoming HTTP route, in this case `GET '/'` (the root URL), a very simple HTML document containing the string `Hello World` will be returned to the presentation tier as the result of the request.
+Si está utilizando Cloud9, ahora está listo para probar nuestra sencilla aplicación con esta línea de comando:
 
-To run our app, we have to start the application server and presentation tier (web) server.  The `rack` application server is controlled by a file `config.ru`, which you must now create and add to version control, containing the following:
+$ bundle exec rackup -p $ PORT -o $ IP
+Puertos disponibles en un espacio de trabajo Cloud9 alojado
 
-```rb
-require './app'
-run MyApp
-```
+Este comando inicia el servidor de aplicaciones Rack y el servidor web WEBrick. Prefijándolo con bundle execasegura que está ejecutando con las gemas especificadas en Gemfile.lock. Rack buscará config.rue intentará iniciar nuestra aplicación en función de la información allí. Si está utilizando Cloud9, verá una pequeña ventana emergente en el terminal con una URL para su aplicación web en ejecución. Se abrirá en una nueva pestaña en el IDE si hace clic en él, pero debe abrir una nueva pestaña del navegador y pegar en esa URL.
 
-The first line tells Rack that our app lives in the file `app.rb`, which you created above to hold your app's code.  We have to explicitly state that our `app` file is located in the current directory (.) because `require` normally looks only in standard system directories to find gems.
+Señale una nueva pestaña del navegador web en la URL de la aplicación en ejecución y verifique que pueda ver "Hola mundo".
 
-If you're using Cloud9, you're now ready to test-drive our simple app with this command line:
+Pregunta de autoverificación
+¿Qué sucede si intenta visitar una URL no root como por https://workspace-username.c9.io/helloqué? (su raíz URL variará)
 
-```sh
-$ bundle exec rackup -p $PORT -o $IP
-```
-[Available ports on a hosted Cloud9 workspace](https://docs.c9.io/docs/run-an-application)
+Ahora debe tener los siguientes archivos bajo control de versiones: Gemfile, Gemfile.lock, app.rb, config.ru. Esta es una aplicación SaaS mínima: el archivo de la aplicación en sí, la lista de gemas requeridas explícitamente, la lista de gemas reales instaladas, incluidas las dependencias implicadas por las gemas requeridas, y un archivo de configuración que le dice al servidor de aplicaciones cómo iniciar la aplicación.
 
-This command starts the Rack appserver and the WEBrick webserver.  Prefixing it with `bundle exec` ensures that you are running with the gems specified in `Gemfile.lock`.  Rack will look for `config.ru` and attempt to start our app based on the information there.  If you're using Cloud9, you will see a small popup in the terminal with a URL to your running webapp.  It will open in a new tab in the IDE if you click on it, but you should open up a fresh browser tab and paste in that URL.
+Modificar la aplicación
+Modifique app.rbpara que en lugar de "Hello World" imprima "Goodbye World". Guarde los cambios app.rbe intente actualizar la pestaña del navegador donde se ejecuta la aplicación.
 
-Point a new Web browser tab at the running app's URL and verify that you can see "Hello World".
+¿Sin cambios? ¿Confuso?
 
-#### Self Check Question
+Ahora regrese a la ventana del shell donde ejecutó rackupy presione Ctrl-C para detener el Rack. Luego, bundle exec rackup -p $PORT -o $IPvuelva a escribir (para Cloud9), y una vez que se esté ejecutando, vuelva a la pestaña del navegador con su aplicación y actualice la página. Esta vez debería funcionar.
 
-<details>
-  <summary>What happens if you try to visit a non-root URL such as <code>https://workspace-username.c9.io/hello</code> and why? (your URL root will vary)</summary>
-  <p><blockquote> You'll get a humorous error message from the Sinatra framework, since you don't have a route matching <code>get '/hello'</code> in your app.  Since Sinatra is a SaaS framework, the error message is packaged up in a Web page and delivered to your browser.</blockquote></p>
-</details>
+Lo que esto muestra es que si modificas tu aplicación mientras está en ejecución, debes reiniciar Rack para que "vea" esos cambios. Ya que el reinicio manual es tedioso, usaremos la rerungema, que reinicia Rack automáticamente cuando ve cambios en los archivos en el directorio de la aplicación. (Rails hace esto por usted de forma predeterminada durante el desarrollo, como veremos, pero Sinatra no).
 
-<br />
+Probablemente ya estés pensando: "¡Ajá! Si nuestra aplicación depende de esta gema adicional, debemos agregarla al Gemfile y ejecutar el paquete para asegurarnos de que esté realmente presente". Buen pensamiento. Pero también puede ocurrir que esta gema en particular no sea necesaria en un entorno de producción: solo la necesitamos como herramienta mientras desarrollamos. Afortunadamente, hay una forma de decirle a Bundler que algunas gemas solo son necesarias en ciertos entornos. Agregue lo siguiente al Gemfile (no importa dónde):
 
-You should now have the following files under version control: `Gemfile`, `Gemfile.lock`, `app.rb`, `config.ru`.  This is a minimal SaaS app: the app file itself, the list of explicitly required gems, the list of actual gems installed including the dependencies implied by the required gems, and a configuration file telling the appserver how to start the app.
+grupo : desarrollo  do 
+  gem ' rerun '
+ end
+Cualquier especificación de gemas dentro del group :developmentbloque solo se examinará si el paquete se ejecuta en el entorno de desarrollo. (Los otros entornos que puede especificar son: prueba y producción, y puede definir nuevos entornos usted mismo). Se supone que las especificaciones de gemas fuera de cualquier bloque de grupo se aplican en todos los entornos.
 
-Modify the app
---------------
+Diga bundle exec rerun -- rackup -p $PORT -o $IPen la ventana del terminal que inicie su aplicación y verifique que la aplicación se esté ejecutando. Hay más detalles sobre el uso de la repetición disponible en GitHub README de la gema . Las gemas generalmente están en GitHub y sus README contienen instrucciones útiles sobre cómo usarlas.
 
-Modify `app.rb` so that instead of "Hello World" it prints "Goodbye World". Save your changes to `app.rb` and try refreshing your browser tab where the app is running.  
+En este caso, estamos prefijando de bundle execnuevo para asegurarnos de que estamos usando las gemas en Gemfile.lock, y el --símbolo está ahí para afirmar que el comando con el que queremos volver a ejecutar es rackup -p $PORT -o $IP. Podríamos lograr el mismo efecto con bundle exec rerun "rackup -p $PORT -o $IP". Ellos son equivalentes. Lo que es más importante, cualquier cambio detectado provocará que el servidor se reinicie automáticamente, de forma similar al uso de guardpara volver a ejecutar automáticamente las especificaciones cuando los archivos cambian.
 
-No changes? Confused?
+Modifique app.rbpara imprimir un mensaje diferente y verifique que el cambio se detecta al volver a ejecutar una vez que actualiza la pestaña del navegador con la aplicación en ejecución. Además, antes de continuar, debes enviar tus últimos cambios a git.
 
-Now go back to the shell window where you ran `rackup` and press Ctrl-C to stop Rack.  Then type `bundle exec rackup -p $PORT -o $IP` again (for Cloud9), and once it is running, go back to your browser tab with your app and refresh the page.  This time it should work.
+Implementar a Heroku
+Heroku es una plataforma en nube como servicio (PaaS) donde podemos implementar nuestras aplicaciones Sinatra (y posteriores Rails) de una manera más sólida que a través de Cloud9. Si todavía no tienes una cuenta, ve a inscribirse en http://www.heroku.com . Necesitará su nombre de usuario y contraseña para el siguiente paso.
 
-What this shows you is that if you modify your app while it's running, you have to restart Rack in order for it to "see" those changes.  Since restarting it manually is tedious, we'll use the `rerun` gem, which restarts Rack automatically when it sees changes to files in the app's directory. (Rails does this for you by default during development, as we'll see, but Sinatra doesn't.)
+Si usa Cloud9, actualice su instalación de Heroku Toolbelt escribiendo el siguiente comando:
 
-You're probably already thinking: "Aha! If our app depends on this additional gem, we should add it to the Gemfile and run bundle to make sure it's really present." Good thinking. But it may also occur to you that this particular gem wouldn't be necessary in a production environment: we only need it as a tool while developing. Fortunately, there's a way to tell Bundler that some gems are only necessary in certain environments. Add the following to the Gemfile (it doesn't matter where):
-
-```rb
-group :development do
-  gem 'rerun'
-end
-```
-
-Any gem specifications inside the `group :development` block will only be examined if bundle is run in the development environment.  (The other environments you can specify are :test and :production, and you can define new environments yourself.)  Gem specifications outside of any group block are assumed to apply in all environments.
-
-Say `bundle exec rerun -- rackup -p $PORT -o $IP` in the terminal window to start your app and verify the app is running.  There are more details on rerun's usage available in the gem's [GitHub README](https://github.com/alexch/rerun#usage). Gem's are usually on GitHub and their README's full of helpful instructions about how to use them.
-
-In this case we are prefixing with `bundle exec` again in order to ensure we are using the gems in the Gemfile.lock, and the `--` symbol is there to assert that the command we want rerun to operate with is `rackup -p $PORT -o $IP`.  We could achieve the same effect with `bundle exec rerun "rackup -p $PORT -o $IP"`.  They are equivalent.   More importantly any detected changes will now cause the server to restart automatically, similar to the use of `guard` to auto re-run specs when files change.
-
-Modify `app.rb` to print a different message, and verify that the change is detected by rerun byagain refreshing your browser tab with the running app.  Also before we move on you should commit your latest changes to git.
-
-Deploy to Heroku
-----------------
-Heroku is a cloud platform-as-a-service (PaaS) where we can deploy our Sinatra (and later Rails) applications in a more robust way than via Cloud9. If you don't have an account yet, go sign up at http://www.heroku.com. You'll need your login and password for the next step.
-
-If using Cloud9, update your Heroku Toolbelt installation by typing the following command:
-
-```
 $ wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-```
+Inicie sesión en su cuenta Heroku escribiendo el comando: heroku loginen la terminal Cloud9. Esto conectará su espacio de trabajo Cloud9 con su cuenta Heroku.
 
-Log in to your Heroku account by typing the command: `heroku login` in the Cloud9 terminal. This will connect your Cloud9 workspace to your Heroku account.
+Mientras estés en el directorio raíz de tu proyecto (no en tu espacio de trabajo completo), escribe heroku createpara crear un nuevo proyecto en Heroku. Esto le dirá al servicio de Heroku que se prepare para algún código entrante, y localmente en Cloud9, agregará un repositorio remoto de git para su llamada heroku.
 
-While in the root directory of your project (not your whole workspace), type `heroku create` to create a new project in Heroku. This will tell the Heroku service to prepare for some incoming code, and locally on Cloud9, it will add a remote git repository for you called `heroku`.
+A continuación, asegúrese de que el escenario y confirmar todos los cambios a nivel local como se indica más arriba (es decir git add, git commit, etc).
 
-Next, make sure you stage and commit all changes locally as instructed above (i.e. `git add`, `git commit`, etc).
+Anteriormente vimos que para ejecutar la aplicación localmente se ejecuta rackuppara iniciar el servidor de aplicaciones Rack, y Rack observa config.rupara determinar cómo iniciar su aplicación Sinatra. ¿Cómo le dice a un entorno de producción cómo iniciar un servidor de aplicaciones u otros procesos necesarios para recibir solicitudes y comenzar su aplicación? En el caso de Heroku, esto se hace con un archivo especial llamado Procfile, que especifica uno o más tipos de procesos de Heroku que usará tu aplicación y cómo iniciar cada uno. El tipo de proceso más básico de Heroku se llama Dyno o "trabajador web". One Dyno puede atender una solicitud de usuario a la vez. Como estamos en el nivel libre de Heroku, solo podemos tener un Dyno. Vamos a crear un archivo con nombre Procfile, y solo esto como el nombre (es decir, Procfile.txt no es válido). Escriba la siguiente línea en su Procfile:
 
-Earlier we saw that to run the app locally you run `rackup` to start the Rack appserver, and Rack looks in `config.ru` to determine how to start your Sinatra app.  How do you tell a production environment how to start an appserver or other processes necessary to receive requests and start your app?  In the case of Heroku, this is done with a special file named `Procfile`,  which specifies one or more types of Heroku processes your app will use, and how to start each one. The most basic Heroku process type is called a Dyno, or "web worker".  One Dyno can serve one user request at a time.  Since we're on Heroku's free tier, we can only have one Dyno. Let's create a file named `Procfile`, and only this as the name (i.e. Procfile.txt is not valid). Write the following line in your `Procfile`:
-
-```
 web: bundle exec rackup config.ru -p $PORT
-```
+Esto le dice a Heroku que inicie un único trabajador web (Dyno) usando esencialmente la misma línea de comando que utilizó para iniciar Rack localmente. Tenga en cuenta que, en algunos casos, a Procfileno es necesario, ya que Heroku puede inferir de sus archivos cómo iniciar la aplicación. Sin embargo, siempre es mejor ser explícito.
 
-This tells Heroku to start a single web worker (Dyno) using essentially the same command line you used to start Rack locally. Note that in some cases, a `Procfile` is not necessary since Heroku can infer from your files how to start the app. However, it's always better to be explicit.  
+Su repositorio local de Cloud9 ahora está listo para implementarse en Heroku:
 
-Your local Cloud9 repo is now ready to deploy to Heroku:
-
-```
 $ git push heroku master
-```
+(se masterrefiere a qué rama del repositorio remoto de Heroku estamos impulsando. Aprenderemos sobre las ramas más adelante en el curso, pero por ahora, basta con decir que solo puedes implementarlo en la masterrama en Heroku.) Este impulso creará una instancia en ejecución de su aplicación en alguna URL que termina con herokuapp.com. Ingrese esa URL en una nueva pestaña del navegador (no en el IDE de Cloud9) para ver su aplicación ejecutándose en vivo. Felicitaciones, lo hiciste: ¡tu aplicación es en vivo!
 
-(`master` refers to which branch of the remote Heroku repo we are pushing to.  We'll learn about branches later in the course, but for now, suffice it to say that you can only deploy to the `master` branch on Heroku.) This push will create a running instance of your app at some URL ending with `herokuapp.com`. Enter that URL in a new browser tab (not in the Cloud9 IDE) to see your app running live. Congratulations, you did it--your app is live!
+Resumen
+Comenzó un nuevo proyecto de aplicación al crear una Gemfileespecificación de las gemas que necesita y ejecutar bundlepara verificar que estén disponibles y crear el Gemfile.lockarchivo que registra las versiones de las gemas realmente en uso.
 
-Summary
--------
+Creó una aplicación Sinatra en el archivo app.rb, apuntó a Rack en este archivo config.ruy se usó rackuppara iniciar el servidor de aplicaciones y el servidor web WEBrick.
 
-* You started a new application project by creating a `Gemfile` specifying which gems you need and running `bundle` to verify that they're available and create the `Gemfile.lock` file that records the versions of gems actually in use.
+Aprendió que cambiar el código de la aplicación no provoca automáticamente que Rack vuelva a cargar la aplicación. Para guardar el trabajo de reiniciar la aplicación manualmente cada vez que realiza un cambio, usó la rerungema, agregándola al Gemfile de una manera que especifica que no lo necesitará en producción, solo durante el desarrollo.
 
-* You created a Sinatra app in the file `app.rb`, pointed Rack at this file in `config.ru`, and used `rackup` to start the appserver and the WEBrick web server.
+Usted versionó los archivos importantes que contienen no solo el código de su aplicación sino la información necesaria para reproducir todas las bibliotecas en las que se basa y el archivo que inicia la aplicación.
 
-* You learned that changing the app's code doesn't automatically cause Rack to reload the app. To save the work of restarting the app manually every time you make a change, you used the `rerun` gem, adding it to the Gemfile in a way that specifies you won't need it in production, only during development.
+Has implementado esta sencilla aplicación para Heroku.
 
-* You versioned the important files containing not only your app's code but the necessary info to reproduce all the libraries it relies on and the file that starts up the app.
-
-* You deployed this simple app to Heroku.
-
------
-
-Next: [Part 1 - Hangperson](part_1_hangperson.md)
+Siguiente: Parte 1 - Hangperson
