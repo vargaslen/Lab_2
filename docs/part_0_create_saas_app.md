@@ -80,43 +80,47 @@ Para ejecutar nuestra aplicación, debemos iniciar el servidor de aplicaciones y 
 1- require  './app' 
 2- run MyApp
 
-La primera línea le dice a Rack que nuestra aplicación vive en el archivo app.rb, que usted creó anteriormente para guardar el código de su aplicación. Tenemos que declarar explícitamente que nuestro apparchivo se encuentra en el directorio actual (.) Porque requirenormalmente solo busca en los directorios del sistema estándar para encontrar gemas.
+La primera línea le dice a Rack que nuestra aplicación vive en el archivo app.rb, que se creó anteriormente para guardar el código de tu aplicación. Tenemos que declarar explícitamente que nuestro archivo se encuentra en el directorio actual (.) Porque "require" normalmente solo busca en los directorios del sistema estándar para encontrar gemas.
 
-Si está utilizando Cloud9, ahora está listo para probar nuestra sencilla aplicación con esta línea de comando:
+ahora estamos listo para probar nuestra sencilla aplicación con esta línea de comando:
 
-$ bundle exec rackup -p $ PORT -o $ IP
-Puertos disponibles en un espacio de trabajo Cloud9 alojado
+$ bundle exec rackup -p 3000 -o 127.0.0.1
 
-Este comando inicia el servidor de aplicaciones Rack y el servidor web WEBrick. Prefijándolo con bundle execasegura que está ejecutando con las gemas especificadas en Gemfile.lock. Rack buscará config.rue intentará iniciar nuestra aplicación en función de la información allí. Si está utilizando Cloud9, verá una pequeña ventana emergente en el terminal con una URL para su aplicación web en ejecución. Se abrirá en una nueva pestaña en el IDE si hace clic en él, pero debe abrir una nueva pestaña del navegador y pegar en esa URL.
 
-Señale una nueva pestaña del navegador web en la URL de la aplicación en ejecución y verifique que pueda ver "Hola mundo".
+Este comando inicia el servidor de aplicaciones Rack y el servidor web WEBrick. Prefijándolo con bundle exec asegura que está ejecutando con las gemas especificadas en Gemfile.lock. Rack buscará config.ru e intentará iniciar nuestra aplicación en función de la información de allí. 
 
-Pregunta de autoverificación
-¿Qué sucede si intenta visitar una URL no root como por https://workspace-username.c9.io/helloqué? (su raíz URL variará)
+Abre una nueva pestaña del navegador web, con la url:localhost:3000 y verifica que puedas ver "Hola mundo".
 
-Ahora debe tener los siguientes archivos bajo control de versiones: Gemfile, Gemfile.lock, app.rb, config.ru. Esta es una aplicación SaaS mínima: el archivo de la aplicación en sí, la lista de gemas requeridas explícitamente, la lista de gemas reales instaladas, incluidas las dependencias implicadas por las gemas requeridas, y un archivo de configuración que le dice al servidor de aplicaciones cómo iniciar la aplicación.
+
+
+Ahora debes tener los siguientes archivos bajo control de versiones: Gemfile, Gemfile.lock, app.rb, config.ru. Esta es una aplicación SaaS mínima: el archivo de la aplicación en sí, la lista de gemas requeridas explícitamente, la lista de gemas reales instaladas (Gemfile.lock), incluidas las dependencias implicadas por las gemas requeridas, y un archivo de configuración que le dice al servidor de aplicaciones (rack) cómo iniciar la aplicación.
 
 Modificar la aplicación
-Modifique app.rbpara que en lugar de "Hello World" imprima "Goodbye World". Guarde los cambios app.rbe intente actualizar la pestaña del navegador donde se ejecuta la aplicación.
 
-¿Sin cambios? ¿Confuso?
+Modifica app.rb para que en lugar de "Hola mundo" imprima "Adios mundo cruel". Guarde los cambios app.rbe intenta actualizar la pestaña del navegador donde se ejecuta la aplicación.
 
-Ahora regrese a la ventana del shell donde ejecutó rackupy presione Ctrl-C para detener el Rack. Luego, bundle exec rackup -p $PORT -o $IPvuelva a escribir (para Cloud9), y una vez que se esté ejecutando, vuelva a la pestaña del navegador con su aplicación y actualice la página. Esta vez debería funcionar.
+¿Sin cambios? ¿Confundido?
 
-Lo que esto muestra es que si modificas tu aplicación mientras está en ejecución, debes reiniciar Rack para que "vea" esos cambios. Ya que el reinicio manual es tedioso, usaremos la rerungema, que reinicia Rack automáticamente cuando ve cambios en los archivos en el directorio de la aplicación. (Rails hace esto por usted de forma predeterminada durante el desarrollo, como veremos, pero Sinatra no).
+Ahora regresa a la ventana del shell donde ejecutó rackup y presiona Ctrl-C para detener el Rack. Luego, vuelve a escribir bundle exec rackup -p 3000 -o 127.0.0.1 , y una vez que se esté ejecutando, vuelve a la pestaña del navegador  y actualiza la página. Esta vez debería funcionar.
 
-Probablemente ya estés pensando: "¡Ajá! Si nuestra aplicación depende de esta gema adicional, debemos agregarla al Gemfile y ejecutar el paquete para asegurarnos de que esté realmente presente". Buen pensamiento. Pero también puede ocurrir que esta gema en particular no sea necesaria en un entorno de producción: solo la necesitamos como herramienta mientras desarrollamos. Afortunadamente, hay una forma de decirle a Bundler que algunas gemas solo son necesarias en ciertos entornos. Agregue lo siguiente al Gemfile (no importa dónde):
 
-grupo : desarrollo  do 
-  gem ' rerun '
+Lo que esto muestra es que si modificas tu aplicación mientras está en ejecución, debes reiniciar Rack para que "vea" esos cambios. Ya que el reinicio manual es tedioso, usaremos la gema rerun, que reinicia Rack automáticamente cuando ve cambios en los archivos en el directorio de la aplicación. (Rails hace esto por tí de forma predeterminada durante el desarrollo, como veremos, pero Sinatra no).
+
+Probablemente ya estés pensando: "¡Ajá! Si nuestra aplicación depende de esta gema adicional, debemos agregarla al Gemfile y ejecutar el paquete para asegurarnos de que esté realmente presente". Buen pensamiento. Pero también puede ocurrir que esta gema en particular no sea necesaria en un entorno de producción: solo la necesitamos como herramienta mientras desarrollamos. Afortunadamente, hay una forma de decirle a Bundler que algunas gemas solo son necesarias en ciertos entornos. Agrega lo siguiente al Gemfile (no importa dónde):
+
+group :development do 
+  gem 'rerun'
  end
-Cualquier especificación de gemas dentro del group :developmentbloque solo se examinará si el paquete se ejecuta en el entorno de desarrollo. (Los otros entornos que puede especificar son: prueba y producción, y puede definir nuevos entornos usted mismo). Se supone que las especificaciones de gemas fuera de cualquier bloque de grupo se aplican en todos los entornos.
 
-Diga bundle exec rerun -- rackup -p $PORT -o $IPen la ventana del terminal que inicie su aplicación y verifique que la aplicación se esté ejecutando. Hay más detalles sobre el uso de la repetición disponible en GitHub README de la gema . Las gemas generalmente están en GitHub y sus README contienen instrucciones útiles sobre cómo usarlas.
+Cualquier especificación de gemas dentro del bloque group :development solo se examinará si el paquete se ejecuta en el entorno de desarrollo. (Los otros entornos que puede especificar son :test y :production , y puedes definir nuevos entornos ti mismo). Se supone que las especificaciones de gemas fuera de cualquier bloque de grupo se aplican en todos los entornos.
 
-En este caso, estamos prefijando de bundle execnuevo para asegurarnos de que estamos usando las gemas en Gemfile.lock, y el --símbolo está ahí para afirmar que el comando con el que queremos volver a ejecutar es rackup -p $PORT -o $IP. Podríamos lograr el mismo efecto con bundle exec rerun "rackup -p $PORT -o $IP". Ellos son equivalentes. Lo que es más importante, cualquier cambio detectado provocará que el servidor se reinicie automáticamente, de forma similar al uso de guardpara volver a ejecutar automáticamente las especificaciones cuando los archivos cambian.
+ejecuta: bundle exec rerun -- rackup -p 3000 -o 127.0.0.1 en la ventana del terminal que inicia tsu aplicación y verifica que la aplicación se está ejecutando. Hay más detalles sobre el uso de la repetición disponible en GitHub README de la gema . Las gemas generalmente están en GitHub y sus README contienen instrucciones útiles sobre cómo usarlas.
 
-Modifique app.rbpara imprimir un mensaje diferente y verifique que el cambio se detecta al volver a ejecutar una vez que actualiza la pestaña del navegador con la aplicación en ejecución. Además, antes de continuar, debes enviar tus últimos cambios a git.
+En este caso, estamos prefijando de nuevo bundle exec para asegurarnos de que estamos usando las gemas en Gemfile.lock, y el símbolo -- está ahí para afirmar que el comando con el que queremos volver a ejecutar es rackup -p 3000 -o 127.0.0.1  . Podríamos lograr el mismo efecto con: bundle exec rerun "rackup -p 3000 -o 127.0.0.1". Ellos son equivalentes. Lo que es más importante, cualquier cambio detectado provocará que el servidor se reinicie automáticamente, de forma similar al uso de guard para volver a ejecutar automáticamente las especificaciones (specs) cuando los archivos cambian.
+
+
+Modifica app.rb para imprimir un mensaje diferente y verifique que el cambio se detecta al volver a ejecutar una vez que actualiza la pestaña del navegador con la aplicación en ejecución. Además, antes de continuar, debes enviar tus últimos cambios a git.
+
 
 Implementar a Heroku
 Heroku es una plataforma en nube como servicio (PaaS) donde podemos implementar nuestras aplicaciones Sinatra (y posteriores Rails) de una manera más sólida que a través de Cloud9. Si todavía no tienes una cuenta, ve a inscribirse en http://www.heroku.com . Necesitará su nombre de usuario y contraseña para el siguiente paso.
