@@ -2,34 +2,46 @@ Parte 0: Desmitificar la creación de aplicaciones SaaS
 
 Objetivo: comprender los pasos necesarios para crear, versionar e implementar una aplicación SaaS, incluido el seguimiento de las bibliotecas de las que depende para que sus entornos de producción y desarrollo sean lo más similares posible.
 
-Lo que harás: crea una aplicación sencilla de "hello world" utilizando el framework Sinatra, vuélvela a la versión adecuada y despliégala en Heroku.
+
+Lo que harás: crea una aplicación sencilla de "hola mundo" utilizando el framework Sinatra, vuélvela a la versión adecuada y despliégala en Heroku.
+
 
 Crear y versionar una aplicación SaaS simple
+
 
 Las aplicaciones SaaS se desarrollan en tu computadora (o IDE basado en la nube) pero se implementan en un servidor al que otros pueden acceder. Intentamos minimizar las diferencias entre los entornos de desarrollo y producción , para evitar problemas difíciles de diagnosticar en los que algo funciona de una manera en tu computadora de desarrollo pero de una manera diferente (o nada) cuando ese código se implementa en producción.
 
 Tenemos dos mecanismos para mantener los entornos de desarrollo y producción consistentes. El primero es el control de versiones , como Git, para el código de la aplicación. Pero dado que casi todas las aplicaciones también se basan en bibliotecas escritas por otros, como gemas en el caso de Ruby, necesitamos una forma de realizar un seguimiento de las versiones de las bibliotecas con las que se ha probado nuestra aplicación, para que las mismas se utilicen en desarrollo y producción.
 
-Afortunadamente, Ruby tiene un maravilloso sistema para administrar dependencias de gemas: una gema llamada Bundler busca un archivo llamado Gemfile en el directorio raíz de la aplicación de cada proyecto. El Gemfile contiene una lista de gemas y versiones de las que depende tu aplicación. Bundler verifica que esas gemas, y cualquier otra a la que dependan, están instaladas correctamente en tu sistema y accesibles para la aplicación.
+Afortunadamente, Ruby tiene un maravilloso sistema para administrar dependencias de gemas: una gema llamada "Bundler" busca un archivo llamado Gemfile en el directorio raíz de la aplicación de cada proyecto. El Gemfile contiene una lista de gemas y versiones de las que depende tu aplicación. Bundler verifica que esas gemas, y cualquier otra a la que dependan, están instaladas correctamente en tu sistema y accesibles para la aplicación.
+
 
 Comencemos con los siguientes pasos:
 
-Crea un nuevo directorio vacío para guardar tu nueva aplicación y utilíza  "git init" en ese directorio para comenzar a crear versiones con Git.
+
+Crea un nuevo directorio vacío para guardar tu nueva aplicación y utilíza:
+
+git init
+
+en ese directorio para comenzar a crear versiones con Git.
 
 En ese directorio, crea un nuevo archivo llamado Gemfile (la capitalización es importante) con los siguientes contenidos. Este archivo será una parte permanente de tu aplicación y se desplazará con tu aplicación a donde quiera que vaya:
 
-fuente ' https://rubygems.org ' 
-ruby ' 2.3.0 '
- 
-gem ' sinatra ' , ' > = 1.4 '
+1- source 'https://rubygems.org' 
+2- ruby '2.3.0'
+3-  
+4- gem 'sinatra' , '>= 1.4'
 
-La primera línea dice que el lugar preferido para descargar las gemas necesarias es https://rubygems.org , que es donde la comunidad de Ruby registra las gemas de "producción lista".
+
+La primera línea dice que el lugar preferido para descargar las gemas necesarias es https://rubygems.org , que es donde la comunidad de Ruby registra las gemas de producción.
 
 La segunda línea especifica qué versión del intérprete de lenguaje Ruby se requiere. Si omitimos esta línea, Bundler no intentará verificar qué versión de Ruby está disponible; hay diferencias sutiles entre las versiones, y no todas las gemas funcionan con todas las versiones, por lo que es mejor especificar esto.
 
-La última línea dice que necesitamos la versión 1.4 o posterior de la gema sinatra. En algunos casos, no necesitamos especificar qué versión de una joya queremos; en este caso, lo especificamos porque dependemos de algunas características que están ausentes de las versiones anteriores de Sinatra.
+La última línea dice que necesitamos la versión 1.4 o posterior de la gema sinatra. En algunos casos, no necesitamos especificar qué versión de una joya (gema) queremos; en este caso, lo especificamos porque dependemos de algunas características que están ausentes de las versiones anteriores de Sinatra.
+
 
 Ejecutar Bundler
+
 
 Ejecute el comando bundle, lo que examina Gemfile para asegurarse de que las gemas correctas (y, donde se especifique, las versiones correctas) estén disponibles, e intenta instalarlas de otro modo. Esto creará un nuevo archivo Gemfile.lock, que debes colocar bajo control de versión.
 
@@ -40,36 +52,34 @@ $ git commit -m " Configurar el Gemfile "
 
 El primer comando prepara todos los archivos modificados para la confirmación (commit). El segundo comando confirma los archivos preparados con el comentario entre comillas. Puedes repetir estos comandos para confirmar cambios futuros. Recuerda que estos son commits LOCALES - si quieres estos cambios en GitHub, deberás ejecutar un comando "git push", que mostraremos más adelante.
 
-Preguntas de autoverificación (haga clic en triángulo para verificar su respuesta)
-
-¿Cuál es la diferencia entre el propósito y el contenido de Gemfiley Gemfile.lock? ¿Qué archivo se necesita para reproducir completamente las gemas del entorno de desarrollo en el entorno de producción?
-
 Después de ejecutar bundle, ¿por qué hay gemas enumeradas en las Gemfile.lock que no figuraban Gemfile?
+
 Crea una aplicación SaaS simple con Sinatra
-Como explica el Capítulo 2 de ESaaS, las aplicaciones SaaS requieren un servidor web para recibir solicitudes HTTP del mundo exterior y un servidor de aplicaciones que "conecta" la lógica de su aplicación con el servidor web. Para el desarrollo, utilizaremos webrickun servidor web basado en Ruby muy simple que sería inapropiado para la producción pero que está bien para el desarrollo. Tanto en desarrollo como en producción, utilizaremos el rackservidor de aplicaciones basado en Ruby, que es compatible con las aplicaciones de Ruby escritas en varios frameworks, incluidos Sinatra y Rails.
 
-Como explica el Capítulo 2 de ESaaS , una aplicación SaaS esencialmente reconoce y responde a las solicitudes HTTP correspondientes a las rutas de la aplicación (recuerde que una ruta consiste en un método HTTP como GETo POSTmás un URI). Sinatra proporciona una abreviatura extremadamente ligera para hacer coincidir una ruta con el código de la aplicación que se ejecutará cuando llegue una solicitud que utiliza esa ruta desde el servidor web.
+Las aplicaciones SaaS requieren un servidor web para recibir solicitudes HTTP del mundo exterior y un servidor de aplicaciones que "conecta" la lógica de su aplicación con el servidor web. Para el desarrollo, utilizaremos webrick un servidor web basado en Ruby muy simple que sería inapropiado para la producción pero que está bien para el desarrollo. Tanto en desarrollo como en producción, utilizaremos el servidor de aplicaciones rack ( basado en Ruby), y que es compatible con las aplicaciones de Ruby escritas en varios frameworks, incluidos Sinatra y Rails.
 
-Cree un archivo en su proyecto llamado que app.rbcontenga lo siguiente:
+Una aplicación SaaS esencialmente reconoce y responde a las solicitudes HTTP correspondientes a las rutas de la aplicación Una ruta consiste en un método HTTP como GET o POST más un URI). Sinatra proporciona una abreviatura extremadamente ligera para hacer coincidir una ruta con el código de la aplicación que se ejecutará cuando llegue una solicitud que utiliza esa ruta desde el servidor web.
 
-requiere  ' sinatra '
+Crea un archivo en tu proyecto llamado  app.rb que contenga lo siguiente:
 
- clase  MyApp <Sinatra :: Base 
-  get ' / '  do 
-    " <! DOCTYPE html> <html> <head> </ head> <body> <h1> Hello World </ h1> </ body> </ html> "
-   end 
-end
-El getmétodo es proporcionado por la Sinatra::Baseclase, de la cual nuestra MyAppclase hereda; Sinatra::Baseestá disponible porque cargamos la biblioteca de Sinatra en la línea 1.
+1- require  'sinatra'
+2-
+3- class  MyApp < Sinatra::Base 
+4- get '/'  do 
+5-    "<!DOCTYPE html><html><head></head><body><h1>Hola mundo</h1></body></html>"
+6- end 
+7- end
 
-Pregunta de autoverificación
-¿Qué * dos * pasos tomamos antes para garantizar que la biblioteca de Sinatra esté disponible para cargar en la línea 1?
+El método get es proporcionado por la  clase Sinatra::Base , de la cual nuestra clase MyApp hereda; Sinatra::Base está disponible porque cargamos la biblioteca de Sinatra en la línea 1.
 
-Como puede ver en el ejemplo simple anterior, Sinatra le permite escribir funciones que coinciden con una ruta HTTP entrante, en este caso GET '/'(la URL raíz), un documento HTML muy simple que contiene la cadena Hello Worldse devolverá al nivel de presentación como resultado de la solicitud.
 
-Para ejecutar nuestra aplicación, debemos iniciar el servidor de aplicaciones y el servidor de nivel de presentación (web). El rackservidor de aplicaciones está controlado por un archivo config.ru, que ahora debe crear y agregar al control de versiones, que contiene lo siguiente:
+Como puedes ver en el ejemplo simple anterior, Sinatra te permite escribir funciones que coinciden con una ruta HTTP entrante, en este caso GET '/'(la URL raíz), un documento HTML muy simple que contiene la cadena "Hola mundo" se devolverá al nivel de presentación (webrick) como resultado de la solicitud.
 
-requiere  ' ./app ' 
-ejecutar MyApp
+Para ejecutar nuestra aplicación, debemos iniciar el servidor de aplicaciones y el servidor de nivel de presentación (web). El servidor de aplicaciones "rack" está controlado por un archivo config.ru, que ahora debes crear y agregar al control de versiones, y que contiene lo siguiente:
+
+1- require  './app' 
+2- run MyApp
+
 La primera línea le dice a Rack que nuestra aplicación vive en el archivo app.rb, que usted creó anteriormente para guardar el código de su aplicación. Tenemos que declarar explícitamente que nuestro apparchivo se encuentra en el directorio actual (.) Porque requirenormalmente solo busca en los directorios del sistema estándar para encontrar gemas.
 
 Si está utilizando Cloud9, ahora está listo para probar nuestra sencilla aplicación con esta línea de comando:
