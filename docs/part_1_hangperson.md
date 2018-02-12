@@ -1,84 +1,50 @@
+Parte 1: Hangperson
+Con toda esta maquinaria en mente, clone este repositorio en Cloud9, y trabajemos en Hangperson.
 
-Part 1: Hangperson
-===========================================================================
-With all this machinery in mind, clone this repo into Cloud9, and let's work on Hangperson.
-
-```sh
 $ git clone https://github.com/saasbook/hw-sinatra-saas-hangperson
 $ cd hw-sinatra-saas-hangperson
 $ bundle
-```
+Desarrollando Hangperson usando TDD y Guardia
+Objetivos: utilice el desarrollo basado en pruebas (TDD) basado en las pruebas que hemos proporcionado para desarrollar la lógica del juego para Ahorcado, lo que le obliga a pensar qué datos son necesarios para capturar el estado del juego. Esto será importante cuando SaaS-ify el juego en la siguiente parte.
 
-Developing Hangperson Using TDD and Guard
------------------------------------------
+Lo que hará: utilizar autotest, nuestros casos de prueba proporcionados se volverán a ejecutar cada vez que realice un cambio en el código de la aplicación. Una por una, las pruebas pasarán de rojo (fallido) a verde (aprobado) a medida que crea el código de la aplicación. Para cuando hayas terminado, tendrás una clase de juego Hangperson en funcionamiento, lista para ser "envuelta" en SaaS usando Sinatra.
 
-**Goals:** Use test-driven development (TDD) based on the tests we've provided to develop the game logic for Hangman, which forces you to think about what data is necessary to capture the game's state. This will be important when you SaaS-ify the game in the next part.
+Visión de conjunto
+Nuestra versión basada en la web del popular juego "verdugo" funciona de la siguiente manera:
 
-**What you will do:**  Use `autotest`, our provided test cases will be re-run each time you make a change to the app code.  One by one, the tests will go from red (failing) to green (passing) as you create the app code.  By the time you're done, you'll have a working Hangperson game class, ready to be "wrapped" in SaaS using Sinatra.
+La computadora elige una palabra al azar
 
-Overview
---------
+El jugador adivina las letras para adivinar la palabra
 
-Our Web-based version of the popular game "hangman" works as follows:
+Si el jugador adivina la palabra antes de hacer siete aciertos incorrectos de letras, gana; de lo contrario, pierden. (Adivinar la misma letra en varias ocasiones simplemente se ignora).
 
-* The computer picks a random word
+Una letra que ya ha sido adivinada o es un carácter no alfabético se considera "inválida", es decir, no es una suposición "válida".
 
-* The player guesses letters in order to guess the word
+Para que el juego sea divertido, cada vez que inicias un juego nuevo, la aplicación recuperará una palabra aleatoria en inglés de un servidor remoto, por lo que cada juego será diferente. Esta característica lo introducirá no solo a utilizar un servicio externo (el generador de palabras aleatorias) como un "elemento básico" en una arquitectura orientada a servicios , sino también a cómo un escenario de pepino puede probar dicha aplicación de manera determinista con pruebas que rompen la dependencia en el servicio externo en el momento de la prueba.
 
-* If the player guesses the word before making seven wrong guesses of letters, they win; otherwise they lose.  (Guessing the same letter repeatedly is simply ignored.)
+En el directorio raíz de la aplicación, di bundle exec autotest.
+Esto activará el marco Autotest, que busca varios archivos para descubrir qué tipo de aplicación está probando y qué marco de prueba está utilizando. En nuestro caso, descubrirá el archivo llamado .rspec, que contiene las opciones de RSpec e indica que estamos utilizando el marco de prueba de RSpec. Por lo tanto, Autotest buscará los archivos de prueba en spec/y los archivos de clase correspondientes en lib/.
 
-* A letter that has already been guessed or is a non-alphabet character is considered "invalid", i.e. it is not a "valid" guess
+Hemos proporcionado un conjunto de 18 casos de prueba para ayudarlo a desarrollar la clase de juego. Eche un vistazo a spec/hangperson_game_spec.rb. Especifica los comportamientos que espera de la clase lib/hangperson_game.rb. Inicialmente, hemos agregado , :pending => truetodas las especificaciones, por lo que cuando Autotest las ejecuta por primera vez, debería ver los nombres de casos de prueba impresos en amarillo y el informe "18 ejemplos, 0 fallos, 18 pendientes".
 
-To make the game fun to play, each time you start a new game the app will actually retrieve a random English word from a remote server, so every game will be different.  This feature will introduce you not only to using an external service (the random-word generator) as a "building block" in a **Service-Oriented Architecture**, but also how a Cucumber scenario can test such an app deterministically with tests that **break the dependency** on the external service at testing time.
+Ahora, con Autotest todavía ejecutándose, elimínelo , :pending => truede la línea 12 y guarde el archivo. Debería ver inmediatamente que Autotest se active y vuelva a ejecutar las pruebas. Ahora debería tener 18 ejemplos, 1 falla, 17 pendientes.
 
-* In the app's root directory, say `bundle exec autotest`.  
+El describe 'new'bloque significa que "el siguiente bloque de pruebas describe el comportamiento de una 'nueva' instancia de HangpersonGame". La hangpersonGamelínea hace que se cree una nueva instancia y las siguientes líneas verifican la presencia y los valores de las variables de instancia.
 
-This will fire up the Autotest framework, which looks for various files to figure out what kind of app you're testing and what test framework you're using.  In our case, it will discover the file called `.rspec`, which contains RSpec options and indicates we're using the RSpec testing framework.  Autotest will therefore look for test files under `spec/` and the corresponding class files in `lib/`.
+Preguntas de autoverificación
+De acuerdo con nuestros casos de prueba, ¿cuántos argumentos espera el constructor de la clase de juego y, por lo tanto, cómo se verá la primera línea de la definición de método a la que debe agregar hangperson_game.rb?
 
-We've provided a set of 18 test cases to help you develop the game class. Take a look at `spec/hangperson_game_spec.rb`.  It specifies behaviors that it expects from the class `lib/hangperson_game.rb`.  Initially, we have added `, :pending => true` to every spec, so when Autotest first runs these, you should see the test case names printed in yellow, and the report "18 examples, 0 failures, 18 pending."
+Según las pruebas en este describebloque, ¿qué variables de instancia se espera que tenga HangpersonGame?
 
-Now, with Autotest still running, delete `, :pending => true` from line 12, and save the file.  You should immediately see Autotest wake up and re-run the tests.  You should now have 18 examples, 1 failure, 17 pending.
+Para hacer que esta prueba falle, deberá crear getters y setters para las variables de instancia mencionadas en las pruebas de autocomprobación anteriores. Sugerencia: uso attr_accessor. Cuando haya hecho esto correctamente y lo haya guardado hangperson_game.rb, autotestdebería volver a activarse y los ejemplos que anteriormente fallaban ahora deberían pasar (verde).
 
-The `describe 'new'` block means "the following block of tests describe the behavior of a 'new' HangpersonGame instance."  The `hangpersonGame` line causes a new instance to be created, and the next lines verify the presence and values of instance variables.
+Continúe de esta manera, eliminando , :pending => truede uno o dos ejemplos a la vez, bajando las especificaciones, hasta que haya implementado todos los métodos de instancia de la clase de juego : guess, que procesa una suposición y modifica las variables de instancia wrong_guessesy en guessesconsecuencia; check_win_or_lose, Que devuelve uno de los símbolos :win, :loseo :playdependiendo del estado actual del juego; y word_with_guesses, que sustituye las conjeturas correctas hechas hasta ahora en la palabra.
 
-#### Self Check Questions
+Sugerencia de depuración
+Al ejecutar las pruebas, puede insertar el comando Ruby byebugen el código de su aplicación para pasar al depurador de la línea de comandos e inspeccionar las variables, etc. Escriba hpara obtener ayuda en el indicador de depuración. Escriba cpara salir del depurador y continuar ejecutando su código.
 
-<details>
-  <summary>According to our test cases, how many arguments does the
-game class constructor expect, and therefore what will the first line of
-the method definition look like that you must add to
-<code>hangperson_game.rb</code>?</summary>
-  <p><blockquote>One argument (in this example, "glorp"), and since constructors in
-Ruby are always named <code>initialize</code>, the first line will be
-<code>def initialize(new_word)</code> or something similar.</blockquote></p>
-</details>
-
-<br />
-
-<details>
-  <summary>According to the tests in this <code>describe</code> block, what
-instance variables is a HangpersonGame expected to have?</summary>
-  <p><blockquote><code>@word</code>, <code>@guesses</code>, and <code>@wrong_guesses</code>.</blockquote></p>
-</details>
-
-<br />
-
-In order to make this failing test pass you'll need to create getters and setters for the instance variables mentioned in the self check tests above.  Hint: use `attr_accessor`.  When you've done this successfully and saved `hangperson_game.rb`, `autotest` should wake up again and the examples that were previously failing should now be passing (green).
-
-Continue in this manner, removing `, :pending => true` from one or two examples at a time working your way down the specs, until you've implemented all the instance methods of the game class: `guess`, which processes a guess and modifies the instance variables `wrong_guesses` and `guesses` accordingly; `check_win_or_lose`, which returns one of the symbols `:win`, `:lose`, or `:play` depending on the current game state; and `word_with_guesses`, which substitutes the correct guesses made so far into the word.
-
-### Debugging Tip
-
-When running tests, you can insert the Ruby command `byebug` into your app code to drop into the command-line debugger and inspect variables and so on.  Type `h` for help at the debug prompt. Type `c` to leave the debugger and continue running your code.
-
-* Take a look at the code in the class method `get_random_word`, which retrieves a random word from a Web service we found that does just that.  Use the following command to verify that the Web service actually works this way. Run it several times to verify that you get different words.
-
-```
+Eche un vistazo al código en el método de clase get_random_word, que recupera una palabra aleatoria de un servicio web que encontramos que hace precisamente eso. Use el siguiente comando para verificar que el servicio web funcione de esta manera. Ejecútelo varias veces para verificar que obtenga diferentes palabras.
 $ curl --data '' http://watchout4snakes.com/wo4snakes/Random/RandomWord
-```
+( --dataes necesario obligar curla hacer un POST en lugar de un GET. Normalmente, el argumento --datasería los campos de formulario codificados, pero en este caso no se necesitan campos de formulario.) El uso curles una excelente manera de depurar las interacciones con servicios externos. man curlpara (mucho) más detalles sobre esta poderosa herramienta de línea de comandos.
 
-(`--data` is necessary to force `curl` to do a POST rather than a GET.  Normally the argument to `--data` would be the encoded form fields, but in this case no form fields are needed.) Using `curl` is a great way to debug interactions with external services.  `man curl` for (much) more detail on this powerful command-line tool.
-
------
-
-Next: [Part 2 - RESTful Thinking](part_2_restful_thinking.md)
+Siguiente: Parte 2 - Pensamiento RESTful
