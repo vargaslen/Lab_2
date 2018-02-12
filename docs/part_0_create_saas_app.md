@@ -123,35 +123,44 @@ Modifica app.rb para imprimir un mensaje diferente y verifique que el cambio se 
 
 
 Implementar a Heroku
-Heroku es una plataforma en nube como servicio (PaaS) donde podemos implementar nuestras aplicaciones Sinatra (y posteriores Rails) de una manera más sólida que a través de Cloud9. Si todavía no tienes una cuenta, ve a inscribirse en http://www.heroku.com . Necesitará su nombre de usuario y contraseña para el siguiente paso.
 
-Si usa Cloud9, actualice su instalación de Heroku Toolbelt escribiendo el siguiente comando:
+Heroku es una plataforma  como servicio en nube (PaaS) donde podemos implementar nuestras aplicaciones Sinatra (y posteriormente en Rails) de una manera sólida. Si todavía no tienes una cuenta, ve a inscribirse en http://www.heroku.com . Necesitarás tu nombre de usuario y contraseña para el siguiente paso.
 
-$ wget -O- https://toolbelt.heroku.com/install-ubuntu.sh | sh
-Inicie sesión en su cuenta Heroku escribiendo el comando: heroku loginen la terminal Cloud9. Esto conectará su espacio de trabajo Cloud9 con su cuenta Heroku.
 
-Mientras estés en el directorio raíz de tu proyecto (no en tu espacio de trabajo completo), escribe heroku createpara crear un nuevo proyecto en Heroku. Esto le dirá al servicio de Heroku que se prepare para algún código entrante, y localmente en Cloud9, agregará un repositorio remoto de git para su llamada heroku.
+Instala una interface de comandos (CLI) para Heroku desde: https://devcenter.heroku.com/articles/getting-started-with-nodejs#set-up
 
-A continuación, asegúrese de que el escenario y confirmar todos los cambios a nivel local como se indica más arriba (es decir git add, git commit, etc).
+Desde la cli que recién instalaste, inicia sesión en tu cuenta Heroku escribiendo el comando: heroku login. Esto conectará su espacio de trabajo con tu cuenta Heroku.
 
-Anteriormente vimos que para ejecutar la aplicación localmente se ejecuta rackuppara iniciar el servidor de aplicaciones Rack, y Rack observa config.rupara determinar cómo iniciar su aplicación Sinatra. ¿Cómo le dice a un entorno de producción cómo iniciar un servidor de aplicaciones u otros procesos necesarios para recibir solicitudes y comenzar su aplicación? En el caso de Heroku, esto se hace con un archivo especial llamado Procfile, que especifica uno o más tipos de procesos de Heroku que usará tu aplicación y cómo iniciar cada uno. El tipo de proceso más básico de Heroku se llama Dyno o "trabajador web". One Dyno puede atender una solicitud de usuario a la vez. Como estamos en el nivel libre de Heroku, solo podemos tener un Dyno. Vamos a crear un archivo con nombre Procfile, y solo esto como el nombre (es decir, Procfile.txt no es válido). Escriba la siguiente línea en su Procfile:
+Mientras estés en el directorio raíz de tu proyecto (no en tu espacio de trabajo completo), escribe: heroku create,  para crear un nuevo proyecto en Heroku. Esto le dirá al servicio de Heroku que se prepare para algún código entrante, y localmente, agregará un repositorio remoto de git para ti llamado: (el nombre es aleatorio).
 
-web: bundle exec rackup config.ru -p $PORT
-Esto le dice a Heroku que inicie un único trabajador web (Dyno) usando esencialmente la misma línea de comando que utilizó para iniciar Rack localmente. Tenga en cuenta que, en algunos casos, a Procfileno es necesario, ya que Heroku puede inferir de sus archivos cómo iniciar la aplicación. Sin embargo, siempre es mejor ser explícito.
 
-Su repositorio local de Cloud9 ahora está listo para implementarse en Heroku:
+A continuación, asegúrate de que preparas (git add .) y confirmas (git commit) todos los cambios a nivel local como se indicó más arriba.
+
+Anteriormente vimos que para ejecutar la aplicación localmente se ejecuta rackup para iniciar el servidor de aplicaciones Rack, y Rack consulta config.ru para determinar cómo iniciar su aplicación Sinatra. ¿Cómo le dices a un entorno de producción la manera de iniciar un servidor de aplicaciones u otros procesos necesarios para recibir solicitudes y comenzar tu aplicación? En el caso de Heroku, esto se hace con un archivo especial llamado "Procfile", que especifica uno o más tipos de procesos de Heroku que usará tu aplicación y cómo iniciar cada uno. El tipo de proceso más básico de Heroku se llama: Dyno o "trabajador web".
+
+El Dyno puede atender una solicitud de usuario a la vez. Como estamos en el nivel "gratuito" de Heroku, solo podemos tener un Dyno.
+Vamos a crear un archivo con nombre Procfile ( y solo esto como el nombre,es decir, Procfile.txt no es válido). Escribe la siguiente línea en tu Procfile:
+
+web: bundle exec rackup config.ru -p 3000
+
+Esto le dice a Heroku que inicie un único trabajador web (Dyno) usando esencialmente la misma línea de comando que utilizó para iniciar Rack localmente. Ten en cuenta que, en algunos casos, el Procfile no es necesario, ya que Heroku puede inferir de tus archivos cómo iniciar la aplicación. Sin embargo, siempre es mejor ser explícito.
+
+Tu repositorio local ahora está listo para implementarse en Heroku:
 
 $ git push heroku master
-(se masterrefiere a qué rama del repositorio remoto de Heroku estamos impulsando. Aprenderemos sobre las ramas más adelante en el curso, pero por ahora, basta con decir que solo puedes implementarlo en la masterrama en Heroku.) Este impulso creará una instancia en ejecución de su aplicación en alguna URL que termina con herokuapp.com. Ingrese esa URL en una nueva pestaña del navegador (no en el IDE de Cloud9) para ver su aplicación ejecutándose en vivo. Felicitaciones, lo hiciste: ¡tu aplicación es en vivo!
+
+("master" se refiere a qué rama (branch) del repositorio remoto de Heroku estamos "actualizando" desde nuestro repositorio local. Aprenderemos sobre las ramas más adelante en el curso, pero por ahora, basta con decir que solo puedes implementarlo en la rama master en Heroku.) Este push creará una instancia en ejecución de tu aplicación en alguna URL que termina con "herokuapp.com".
+Ingresa esa URL en una nueva pestaña del navegador para ver tu aplicación ejecutándose en vivo. Felicitaciones, lo hiciste: ¡tu aplicación esta en la web!
 
 Resumen
-Comenzó un nuevo proyecto de aplicación al crear una Gemfileespecificación de las gemas que necesita y ejecutar bundlepara verificar que estén disponibles y crear el Gemfile.lockarchivo que registra las versiones de las gemas realmente en uso.
 
-Creó una aplicación Sinatra en el archivo app.rb, apuntó a Rack en este archivo config.ruy se usó rackuppara iniciar el servidor de aplicaciones y el servidor web WEBrick.
+Comenzaste un nuevo proyecto de aplicación al crear una especificación Gemfile de las "gemas" que necesitas y ejecutaste bundle para verificar que estén disponibles y crear el Gemfile.lock, archivo que registra las versiones de las gemas realmente en uso.
 
-Aprendió que cambiar el código de la aplicación no provoca automáticamente que Rack vuelva a cargar la aplicación. Para guardar el trabajo de reiniciar la aplicación manualmente cada vez que realiza un cambio, usó la rerungema, agregándola al Gemfile de una manera que especifica que no lo necesitará en producción, solo durante el desarrollo.
+Creaste una aplicación Sinatra en el archivo app.rb, apuntaste a Rack en el archivo config.ru y usaste rackup para iniciar el servidor de aplicaciones y el servidor web WEBrick.
 
-Usted versionó los archivos importantes que contienen no solo el código de su aplicación sino la información necesaria para reproducir todas las bibliotecas en las que se basa y el archivo que inicia la aplicación.
+Aprendiste que cambiar el código de la aplicación no provoca automáticamente que Rack vuelva a cargar la aplicación. Para guardar el trabajo de reiniciar la aplicación manualmente cada vez que se realiza un cambio, usaste la gema rerun agregándola al Gemfile de una manera que especifica que no lo necesitarás en producción, solo durante el desarrollo.
+
+Versionaste los archivos importantes que contienen: no solo el código de tu aplicación sino la información necesaria para reproducir todas las bibliotecas en las que se basa y el archivo que inicia la aplicación.
 
 Has implementado esta sencilla aplicación para Heroku.
 
