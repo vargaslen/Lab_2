@@ -35,22 +35,30 @@ Como antes, ejecute el comando de shell:
 
 El servidor web conectado a Sinatra se ejecutará localmente, por lo que la primera parte de la URL es algo así como http://127.0.0.1:3000. El código Ruby: get '/new' do ... en la app.rb nos lleva a la página de un Nuevo juego, por lo que la URL completa tiene el formato http://127.0.0.1:3000/new.
 
-Visite esta URL y verifique que aparezca la página Iniciar nuevo juego.
+Visita esta URL y verifica que aparezca la página Iniciar nuevo juego.
 
-Pregunta de autoverificación
-¿Dónde está el código HTML para esta página?
+El código HTML para esta página,está en views/new.erb, y es procesado por la directiva: erb :new ,  de Sinatra.
 
-Verifique que al hacer clic en el botón Nuevo juego, aparece un error. Esto se debe a que hemos dejado deliberadamente el <form>botón que incluye este botón incompleto: no hemos especificado dónde debe publicarse el formulario. Lo haremos a continuación, pero lo haremos de forma guiada por pruebas.
+Verifica que al hacer clic en el botón: "Un juego nuevo", aparece un error. Esto se debe a que hemos dejado el formulario <form>  que incluye este botón deliberadamente incompleto: no hemos especificado dónde debe publicarse el formulario. Lo haremos a continuación, pero lo haremos de forma "guiada por pruebas"(TDD).
 
-Pero primero, entreguemos nuestra aplicación a Heroku. Este es en realidad un paso crítico. Necesitamos asegurarnos de que nuestra aplicación se ejecute en heroku antes de comenzar a hacer cambios significativos.
+Pero primero, montemos nuestra aplicación en Heroku. Este es en realidad un paso crítico. Necesitamos asegurarnos de que nuestra aplicación se ejecute en heroku antes de comenzar a hacer cambios significativos.
 
-Primero, ejecuta bundle installpara asegurarte de que nuestro Gemfile y Gemfile.lock estén sincronizados.
-A continuación, escriba git add .para organizar todos los archivos modificados (incluido Gemfile.lock)
-Luego escriba git commit -m "Ready for Heroku!"para confirmar todos los cambios locales en Cloud9.
-Luego, escribe heroku loginy autentica.
-Dado que esta es la primera vez que le contamos a Heroku sobre la aplicación Hangperson, debemos escribir heroku createpara que Heroku se prepare para recibir este código y hacer que cree una referencia git para hacer referencia al nuevo repositorio remoto.
-Luego, escribe git push heroku masterpara enviar tu código Cloud9 a Heroku.
-Cuando quieras actualizar a Heroku más tarde, solo tienes que enviar tus cambios a git localmente en Cloud9, y luego presionar a Heroku como en el último paso.
-Verifique que el ahorcado desplegado por Heroku se comporte igual que su versión de desarrollo antes de continuar. Algunas líneas desde la parte inferior de la salida de Heroku en la terminal Cloud9 deberían tener una URL que termine en herokuapp.com. Busque eso, cópielo en el portapapeles y péguelo en una nueva pestaña del navegador para ver la aplicación actual. La pestaña del navegador IDE de Cloud9 no procesará la aplicación correctamente, por lo tanto, use una nueva pestaña del navegador fuera de Cloud9.
-Verifique la funcionalidad rota haciendo clic en el nuevo botón de juego.
-Siguiente: Parte 4 - Pepino
+1- Primero,y desde el directorio raíz de la aplicacion Hangperson) ejecuta "bundle install" para asegurarte de que nuestro Gemfile y Gemfile.lock estén sincronizados.
+
+2- A continuación, ejecuta "git add ." para preparar (stage) todos los archivos modificados (incluido Gemfile.lock)
+
+3- Luego ejecuta git commit -m "Listo para heroku!" para confirmar todos los cambios locales .
+
+4- Luego, escribe heroku login y autentica.
+
+5-Dado que esta es la primera vez que le contamos a Heroku sobre la aplicación Hangperson, debemos ejecutar "heroku create" para que Heroku se prepare a recibir este código y lo haga crear una "referencia git" que lo vincule al nuevo repositorio remoto. Toma nota del nombre aleatorio que Heroku asigna a al nuevo repositorio.
+
+6- Luego, ejecuta: "git push heroku master" para enviar tu código local a Heroku.
+
+Cuando quieras actualizar a Heroku más tarde, solo tienes que repetir los pasos del 2 al 4 y por último el 6.
+
+Verifica que el Hangman (ahorcado) desplegado por Heroku se comporte igual que su versión de desarrollo antes de continuar.
+En la pestaña "settings" de heroku, en la seccion: Domains and certificates. encontrarás el link para que tu aplicacion pueda ser vista en el navegador de tu preferencia (el link termina en  herokuapp.com).
+
+Verifica la funcionalidad "rota" haciendo clic en el botón de "Un juego nuevo".
+Siguiente: Parte 4 - cucumber
