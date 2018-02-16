@@ -71,8 +71,13 @@ En una verdadera arquitectura orientada a servicios, estaríamos casi listos. Pe
 
 Por lo tanto, para comenzar un juego nuevo, debemos proporcionar al usuario una forma de publicar el formulario que activará la acción: POST /create . Puedes pensar en el recurso en cuestión como "la oportunidad de crear un nuevo juego". Entonces podemos agregar otra fila a nuestra tabla de rutas:
 
-RUTA Y ACCIÓN	| OPERACIÓN DE RECURSOS	       | RESULTADO WEB
-GET /new      |	darle al usuario humano la oportunidad de comenzar un nuevo juego	| mostrar un formulario que incluye un botón "iniciar nuevo juego"
+<table>
+<tbody>
+<tr>
+<td><code>GET /new</code>   </td><td>  darle al usuario humano la oportunidad de comenzar un nuevo juego </td><td> mostrar un formulario que incluye un botón "Un juego nuevo"  </td>
+</tr>
+</tbody>
+</table>
 
 Del mismo modo, ¿cómo  el usuario humano genera POST para adivinar una nueva letra? Como ya tenemos una acción para mostrar el estado del juego actual (show), sería fácil incluir en la misma página HTML un formulario de "adivinar una letra" que, cuando se envía, genera la acción: POST /guess .
 
