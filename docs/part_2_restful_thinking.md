@@ -49,11 +49,21 @@ Esta es una distinción importante, porque un redireccionamiento HTTP desencaden
 Un argumento similar se aplica a la acción de crear un nuevo juego. La responsabilidad de crear un nuevo objeto de juego recae en esa acción (create); pero una vez que se crea el nuevo objeto del juego, ya tenemos una acción para mostrar el estado actual del juego (show).
 
 Entonces, podemos comenzar a mapear nuestras acciones RESTful en términos de solicitudes HTTP de la siguiente manera, usando algunos URI simples para las rutas:
+<table>
+<thead>
+<tr>
+<th> RUTA Y ACCIÓN </th><th>  OPERACIÓN EN EL  RECURSO</th> <th>  RESULTADO EN WEB</th>
+</tr>
+</thead>
+<tbody>
 
-RUTA Y ACCIÓN	| OPERACIÓN DE RECURSOS	       | RESULTADO WEB
-GET /show	    |mostrar el estado del juego	 |mostrar aciertos y aciertos incorrectos hasta el momento
-POST /guess	  |actualizar el estado del juego| con una nueva letra adivinada	redirigir a show
-POST /create	|crear nuevo juego	           |redirigir a show
+<tr><td> <code>GET /show</code>      </td><td>   mostrar el estado del juego      </td><td>  mostrar aciertos y desaciertos hasta el momento</td></tr>
+<tr><td> <code>POST /guess</code>    </td><td>   actualizar el estado del juego </td><td> redirigir a <code>show</code></td></tr>
+<tr><td> <code>POST /create</code>   </td><td>   crear nuevo juego      </td><td>  redirigir a <code>show</code></td></tr>
+</tbody>
+</table>
+
+
 
 En una verdadera arquitectura orientada a servicios, estaríamos casi listos. Pero un sitio visitdo a a través de un navegador web no es precisamente una verdadera "arquitectura orientada a servicios".
 
