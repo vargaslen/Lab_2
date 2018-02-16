@@ -1,79 +1,56 @@
 
-Part 3: Connecting HangpersonGame to Sinatra
-============================================
+PARTE 3: CONEXIÓN DEL JUEGO HANGPERSON (AHORCADO)  A SINATRA
 
-You've already met Sinatra.  Here's what's new in the Sinatra app skeleton [`app.rb`](../app.rb) that we provide for Hangperson:
+Ya conociste a Sinatra (recuerda la clase MyApp). Esto es lo nuevo  del armazón de la aplicación Sinatra app.rb que ya comenzamos a trabajar en Hangperson:
 
-* `before do...end` is a block of code executed *before* every SaaS request
+before do...end : es un bloque de código ejecutado antes de cada solicitud de SaaS
 
-* `after do...end` is executed *after* every SaaS request
- 
-* The calls  `erb :` *action* cause Sinatra to look for the file `views/`*action*`.erb` and run them through the Embedded Ruby processor, which looks for constructions `<%= like this %>`, executes the Ruby code inside, and substitutes the result.  The code is executed in the same context as the call to `erb`, so the code can "see" any instance variables set up in the `get` or `post` blocks.
+after do...end  : se ejecuta después de cada solicitud de SaaS
 
-#### Self Check Question
+Las llamadas "erb : acción"   hacen que Sinatra busque el archivo views/acción (de tipo .erb) y lo ejecute a través del procesador Ruby (erb: embedded ruby), que busca construcciones <%= like this %>, ejecuta el código de Ruby dentro y sustituye el resultado. El código se ejecuta en el mismo contexto que la llamada a erb, por lo que el código puede "ver" cualquier variable de instancia configurada en los bloques get o post.
 
-<details>
-  <summary><code>@game</code> in this context is an instance variable of what
-class?  (Careful-- tricky!)</summary>
-  <p><blockquote>It's an instance variable of the <code>HangpersonApp</code> class in the app.rb file.  Remember we are dealing with two Ruby classes here: the <code>HangpersonGame</code> class encapsulates the game logic itself (that is, the Model in model-view-controller), whereas <code>HangpersonApp</code> encapsulates the logic that lets us deliver the game as SaaS (you can roughly think of it as the Controller logic plus the ability to render the views via <code>erb</code>).</blockquote></p>
-</details>
+@game es una variable de instancia de la clase HangpersonApp en el archivo app.rb .Estamos tratando aquí con dos clases de Ruby: la clase HangpersonGame encapsula la lógica del juego en sí misma (es decir, el Modelo en el patron Modelo-Vista-Controlador), mientras que la clase  HangpersonApp (como en MyApp) encapsula la lógica que nos permite "montar" el juego como SaaS (puede pensar más o menos de ella como la lógica del controlador más la capacidad de representar las vistas a través de erb).
 
-The Session
------------
+LA SESIÓN
 
-We've already identified the items necessary to maintain game state, and encapsulated them in the game class.  Since HTTP is stateless, when a new HTTP request comes in, there is no notion of the "current game".  What we need to do, therefore, is save the game object in some way between requests.
+Ya identificamos los elementos necesarios para mantener el estado del juego y los encapsulamos en la clase de juego. Como el protocolo HTTP no tiene estado (stateless), cuando aparece una nueva solicitud HTTP, no hay ninguna noción del "juego actual". Lo que tenemos que hacer, por lo tanto, es guardar el objeto del juego de alguna manera entre las solicitudes.
 
-If the game object were large, we'd probably store it in a database on the server, and place an identifier to the correct database record into the cookie.  (In fact, as we'll see, this is exactly what Rails apps do.)  But since our game state is small, we can just put the whole thing in the cookie.  Sinatra's `session` library lets us do this: in the context of the Sinatra app, anything we place into the special "magic" hash `session[]` is preserved across requests.  In fact, objects placed there are *serialized* into a text-friendly form that is preserved for us.  This behavior is switched on by the Sinatra call `enable :sessions` in `app.rb`.
+Si el objeto del juego fuera grande, probablemente lo almacenaríamos en un registro de base de datos en el servidor (permanencia) y colocaríamos el identificador de dicho registro  en una "cookie" (de hecho, como veremos, esto es exactamente lo que hacen las aplicaciones Rails). Pero dado que nuestro estado de juego es pequeño, podemos simplemente poner todo en la cookie. La biblioteca de session  de Sinatra nos permite hacer esto: en el contexto de la aplicación Sinatra (HangpersonApp), todo lo que colocamos en el hash especial: session[] , se preserva a través de las solicitudes. De hecho, los objetos colocados allí se "serializan" en una forma textual amigable y que se conserva para nosotros. Este comportamiento se activa mediante una llamada de Sinatra: enable :sessions en: app.rb.
 
-There is one other session-like object we will use.  In some cases above, one action will perform some state change and then redirect to another action, such as when the Guess action (triggered by `POST /guess`) redirects to the Show action (`GET /show`) to redisplay the game state after each guess.  But what if the Guess action wants to display a message to the player, such as to inform them that they have erroneously repeated a guess?  The problem is that since every request is stateless, we need to get that message "across" the redirect, just as we need to preserve game state "across" HTTP requests.
+Hay otro objeto de sesión que usaremos. En uno de los casos anteriores, una acción realiza un cambio de estado y luego redirige a otra acción, así, cuando la acción guess  (disparada por POST /guess) redirige a la acción show ( GET /show) para volver a mostrar el estado del juego después de cada adivinanza. Pero, ¿qué sucede si la acción "Guess" quiere mostrar un mensaje al jugador, tal como informarles que han repetido erróneamente una adivinanza? El problema es que dado que cada solicitud es independiente (stateless), tenemos que transmitir ese mensaje "a través" de la redirección, delmismo modo que necesitamos preservar el estado deljuego "a través de" las solicitudes HTTP ..
 
-To do this, we use the `sinatra-flash` gem, which you can see in the Gemfile.  `flash[]` is a hash for remembering short messages that persist until the *very next* request (usually a redirect), and are then erased. 
+Para hacer esto, usamos la gema: sinatra-flash , que puedes ver en el archivo Gemfile. flash[] es un hash para recordar mensajes cortos que persisten hasta la próxima solicitud (generalmente una redirección), y luego se borran.
 
-#### Self Check Question
+Cuando ponemos algo en sesión[] permanece allí hasta que lo eliminemos. El caso de un mensaje que debe "sobrevivir a una redirección" es que solo debe mostrarse una vez; flash [] incluye la funcionalidad adicional de borrar los mensajes después de la próxima solicitud.
 
-<details>
-  <summary>Why does this save work compared to just storing those
-messages in the <code>session[]</code> hash?</summary>
-  <p><blockquote>When we put something in <code>session[]</code> it stays there until we delete it.  The common case for a message that must survive a redirect is that it should only be shown once; <code>flash[]</code> includes the extra functionality of erasing the messages after the next request.</blockquote></p>
-</details>
 
-Running the Sinatra app
------------------------
 
-As before, run the shell command `bundle exec rackup -p $PORT -o $IP` to start the app, or `bundle exec rerun -- rackup -p $PORT -o $IP` if you want to rerun the app each time you make a code change.  
+Como antes, ejecute el comando de shell:
 
-#### Self Check Question
+ bundle exec rackup -p 3000 -o 127.0.0.1
 
-<details>
-  <summary>Based on the output from running this command, what is the full URL you need to visit in order to visit the New Game page?</summary>
-  <p><blockquote>The web server connected to Sinatra is running on Cloud9, so the first part of the URL is something like <code>http://your-workspace-name.c9.io</code>. The Ruby code <code>get '/new' do...</code> in <code>app.rb</code> renders the New Game page, so the full URL is in the form <code>http://your-workspace-name.c9.io/new</code>.</blockquote></p>
-</details>
-<br />
+ para iniciar la aplicación.
 
-Visit this URL and verify that the Start New Game page appears. 
 
-#### Self Check Question
 
-<details>
-  <summary>Where is the HTML code for this page?</summary>
-  <p><blockquote>It's in <code>views/new.erb</code>, which is processed into HTML by the <code>erb :new</code> directive.</blockquote></p>
-</details>
-<br />
+El servidor web conectado a Sinatra se ejecutará localmente, por lo que la primera parte de la URL es algo así como http://127.0.0.1:3000. El código Ruby: get '/new' do ... en la app.rb nos lleva a la página de un Nuevo juego, por lo que la URL completa tiene el formato http://127.0.0.1:3000/new.
 
-Verify that when you click the New Game button, you get an error.  This is because we've deliberately left the `<form>` that encloses this button incomplete: we haven't specified where the form should post to. We'll do that next, but we'll do it in a test-driven way.
+Visite esta URL y verifique que aparezca la página Iniciar nuevo juego.
 
-But first, let's get our app onto Heroku.  This is actually a critical step.  We need to ensure that our app will run on heroku **before** we start making significant changes.
+Pregunta de autoverificación
+¿Dónde está el código HTML para esta página?
 
-* First, run `bundle install` to make sure our Gemfile and Gemfile.lock are in sync.
-* Next, type `git add .` to stage all changed files (including Gemfile.lock)
-* Then type `git commit -m "Ready for Heroku!"` to commit all local changes on Cloud9.
-* Next, type `heroku login` and authenticate.
-* Since this is the first time we're telling Heroku about the Hangperson app, we must type `heroku create` to have Heroku prepare to recieve this code and to have it create a git reference for referencing the new remote repository. 
-* Then, type `git push heroku master` to push your Cloud9 code to Heroku. 
-* When you want to update Heroku later, you only need to commit your changes to git locally in Cloud9, then push to Heroku as in the last step. 
-* Verify that the Heroku-deployed Hangperson behaves the same as your development version before continuing. A few lines up from the bottom of the Heroku output in the Cloud9 terminal should have a URL ending in herokuapp.com. Find that, copy it to the clipboard, and paste it into a new browser tab to see the current app. The Cloud9 IDE browser tab won't render the app properly, so use a new browser tab outside of Cloud9.
-* Verify the broken functionality by clicking the new game button.
+Verifique que al hacer clic en el botón Nuevo juego, aparece un error. Esto se debe a que hemos dejado deliberadamente el <form>botón que incluye este botón incompleto: no hemos especificado dónde debe publicarse el formulario. Lo haremos a continuación, pero lo haremos de forma guiada por pruebas.
 
------
+Pero primero, entreguemos nuestra aplicación a Heroku. Este es en realidad un paso crítico. Necesitamos asegurarnos de que nuestra aplicación se ejecute en heroku antes de comenzar a hacer cambios significativos.
 
-Next: [Part 4 - Cucumber](part_4_cucumber.md)
+Primero, ejecuta bundle installpara asegurarte de que nuestro Gemfile y Gemfile.lock estén sincronizados.
+A continuación, escriba git add .para organizar todos los archivos modificados (incluido Gemfile.lock)
+Luego escriba git commit -m "Ready for Heroku!"para confirmar todos los cambios locales en Cloud9.
+Luego, escribe heroku loginy autentica.
+Dado que esta es la primera vez que le contamos a Heroku sobre la aplicación Hangperson, debemos escribir heroku createpara que Heroku se prepare para recibir este código y hacer que cree una referencia git para hacer referencia al nuevo repositorio remoto.
+Luego, escribe git push heroku masterpara enviar tu código Cloud9 a Heroku.
+Cuando quieras actualizar a Heroku más tarde, solo tienes que enviar tus cambios a git localmente en Cloud9, y luego presionar a Heroku como en el último paso.
+Verifique que el ahorcado desplegado por Heroku se comporte igual que su versión de desarrollo antes de continuar. Algunas líneas desde la parte inferior de la salida de Heroku en la terminal Cloud9 deberían tener una URL que termine en herokuapp.com. Busque eso, cópielo en el portapapeles y péguelo en una nueva pestaña del navegador para ver la aplicación actual. La pestaña del navegador IDE de Cloud9 no procesará la aplicación correctamente, por lo tanto, use una nueva pestaña del navegador fuera de Cloud9.
+Verifique la funcionalidad rota haciendo clic en el nuevo botón de juego.
+Siguiente: Parte 4 - Pepino
