@@ -74,7 +74,7 @@ Por lo tanto, para comenzar un juego nuevo, debemos proporcionar al usuario una 
 <table>
 <tbody>
 <tr>
-<td><code>GET /new</code>   </td><td>  darle al usuario humano la oportunidad de comenzar un nuevo juego </td><td> mostrar un formulario que incluye un botón "Un juego nuevo"  </td>
+<td><code>GET /new</code>   </td><td>  darle al usuario humano la oportunidad de comenzar un nuevo juego </td><td> mostrar un formulario que incluye un botón "New Game"  </td>
 </tr>
 </tbody>
 </table>
@@ -98,9 +98,9 @@ Empieza un juego nuevo; redirige a Show luego de cambiar el estado de juego:	POS
 
 Adivinar el proceso; redirige a Show luego de cambiar el estado:	POST / guess
 
-Mostrar la página "win" con el botón para iniciar un juego nuevo:	GET / win
+Mostrar la página "win" con el botón para iniciar un juego nuevo(New Game):	GET / win
 
-Mostrar la página "lose" con el botón para iniciar un juego nuevo:	GET / lose
+Mostrar la página "lose" con el botón para iniciar un juego nuevo(New Game):	GET / lose
 
 RESUMEN DEL DISEÑO
 

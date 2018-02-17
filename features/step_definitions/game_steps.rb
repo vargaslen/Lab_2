@@ -13,7 +13,7 @@ When /^I start a new game with word "(.*)"$/ do |word|
   stub_request(:post, "http://watchout4snakes.com/wo4snakes/Random/RandomWord").
     to_return(:status => 200, :headers => {}, :body => word)
   visit '/new'
-  click_button "New Game"
+  click_button "Un juego nuevo"
 end
 
 When /^I guess "(.*)"(?: again)?$/ do |letter|
@@ -83,4 +83,3 @@ When /^(?:|I )press "([^\"]*)"(?: within "([^\"]*)")?$/ do |button, selector|
     click_button(button)
   end
 end
-
