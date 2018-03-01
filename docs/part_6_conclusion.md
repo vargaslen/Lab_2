@@ -1,14 +1,14 @@
 
-Conclusion
-==========
+CONCLUSIÓN
 
-This assignment has served as a microcosm or miniature tour of the entire course: during the rest of the course we will investigate each of these in much more detail, and we will also add new techniques---
+Esta tarea ha servido como un microcosmos o recorrido en miniatura de todo el curso: en un curso posterior investigaremos cada uno de estos con mucho más detalle, y también agregaremos nuevas técnicas ---
 
-* *Test-driven development (TDD)* will let you write much more detailed tests for your code and determine its **coverage**, that is, how thoroughly your tests exercise your code.  We will use **RSpec** to do test-first development, in which we write tests before we write the code, watch the test fail ("red"), quickly write just enough code to make the test pass ("green"), clean up (refactor) the code, and go on to the next test.  We will use the `autotest` tool to help us get into a rhythm of red--green--refactor. In this assignment we provided the specs for you; when designing your own app, you'll write them yourself.
+El desarrollo basado en pruebas (TDD) te permitirá escribir pruebas mucho más detalladas para tu código y determinar su cobertura , es decir, qué tan exhaustivamente tus pruebas "ejercitan" tu código. Usamos RSpec para hacer un desarrollo de prueba (test) primero, en el cual escribimos pruebas antes de escribir el código, vemos la prueba fallar ("rojo"), escribimos rápidamente el código suficiente para hacer que la prueba pase ("verde"), "limpiamos" el código, y pasamos a la siguiente prueba. Usaremos la cherramienta:autotest , para ayudarnos a entrar en un ritmo de cambios rojo - verde. En esta tarea recién terminada,  te proporcionamos las especificaciones; cuando diseñes su propia aplicación, los escribirás tu mismo.
 
-* *Code metrics* will give us insight into the quality of our code: is it concise?  Is it factored in a way that minimizes the cost of making changes and enhancements?  Does a particular class try to do too much (or too little)?  We will use **CodeClimate** (among other tools) to help us understand the answers.  We can check both quantitative metrics, such as test coverage and complexity of a single method, and qualitative ones, such as adherence to the *SOLID Principles* of object-oriented design.
+Las métricas de código nos darán una idea de la calidad de nuestro código: ¿es conciso? ¿Se prevee una manera que minimize el costo de realizar cambios y mejoras? ¿Una clase en particular intenta hacer demasiado (o muy poco)? Utilizaremos "CodeClimate" (entre otras herramientas) para ayudarnos a entender las respuestas. Podemos verificar tanto las métricas cuantitativas:como la cobertura de prueba y la complejidad de un único método, como las cualitativas, como la adherencia a los Principios SÓLIDOS del diseño orientado a objetos.
 
-* *Refactoring* means modifying the structure of your code to improve its quality (maintainability, readability, modifiability) while preserving its behavior.  We will learn to identify *antipatterns* -- warning signs of deteriorating quality in your code -- and opportunities to fix them, sometimes by applying *design patterns* that have emerged as "templates" capturing an effective solution to a class of similar problems. 
+"Refactorizar" significa modificar la estructura de tu código para mejorar su calidad (facilidad de mantenimiento, legibilidad, modificabilidad) mientras preserva su comportamiento. Aprenderemos a identificar los antipatrones (signos de advertencia de deterioro de la calidad de su código) y las oportunidades para solucionarlos, a veces mediante la aplicación de patrones de diseño que han surgido como "plantillas" que capturan una solución efectiva para una clase de problemas similares.
+
 
 -----
 
